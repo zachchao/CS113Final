@@ -1,5 +1,10 @@
 package edu.miracosta.cs113;
 
+/**
+ * Basic edge class
+ * @author w7270821
+ *
+ */
 public class Edge {
 	private Point source, destination;
 	private int weight;

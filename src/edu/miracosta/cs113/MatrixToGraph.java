@@ -8,17 +8,24 @@ import java.util.HashSet;
  *
  */
 public class MatrixToGraph {
-	private int rows, cols;
+	//0's are paths, 1's are boundaries
 	private int[][] maze;
+	//The size of our maze
+	private int rows, cols;
 	
 	public MatrixToGraph(int[][] maze){
 		this.maze = maze;
 		this.rows = maze.length;
 		this.cols = maze[0].length;
-		
-		System.out.println("COLS " + this.cols + " ROWS " + this.rows);
+		//Testing
+		//System.out.println("COLS " + this.cols + " ROWS " + this.rows);
 	}
 	
+	/**
+	 * Traverses array and if our isVertecie function
+	 * returns true, adds it to a HashSet
+	 * @return The HashSet of verticies
+	 */
 	public HashSet<Point> getAllVertecies(){
 		HashSet<Point> verticies = new HashSet<Point>();
 		for(int row = 0; row < rows; row++){
@@ -33,13 +40,21 @@ public class MatrixToGraph {
 	
 	/**
 	 * Given a verticie we need to know what the corresponding
-	 * edges are with weights
-	 * Assumes what we are fed is already a vertex
+	 * edges are with weights 
+	 * Basic algorithm - 
+	 * 		Given the available paths around the vertex, 
+	 * 		traverse in that direction until you reach 
+	 * 		the next vertex, the weight will be how far
+	 * 		you traversed
+	 * Invariant - Assumes what we are fed is already a vertex
+	 * @param row The row of our initial vertex
+	 * @param col The column of our initial vertex
 	 */
-	public void findEdges(int row, int col){
+	public HashSet<Edge> findEdges(int row, int col){
 		HashSet<Edge> edges = new HashSet<Edge>();
-		int[] adjacencies = adjacencies(row, col);
 		Point source = new Point(row, col);
+		//Formatted [N, E, S, W]
+		int[] adjacencies = adjacencies(row, col);
 		
 		//Testing
 		/*
@@ -97,14 +112,20 @@ public class MatrixToGraph {
 			}
 		}
 		
+		//Testing
 		for(Edge e : edges){
 			System.out.println(e);
 		}
+		
+		return edges;
 	}
 	
 	/**
 	 * Given a coordinate, give back what the values are of its
 	 * adjacent points are
+	 * For each coordinate we have to first test
+	 * If we are out of bounds, if we are then automatically
+     * We are considered a bound, aka 1, else, check if it is a bound
 	 * @param row Row of the coordinate
 	 * @param col Column of the coordinate
 	 * @return Returns an array of format [N, E, S, W]
@@ -133,13 +154,24 @@ public class MatrixToGraph {
 		return new int[] {N, E, S, W};
 	}
 	
+	/**
+	 * Takes in a row and column of the matrix and returns
+	 * whether or not it is a vertex in the graph
+	 * a vertex is defined as being a decision point, aka
+	 * having a change in direction
+	 * @param row The row of the matrix
+	 * @param col The column of the matrix
+	 * @return Whether or not it is a vertex
+	 */
 	public boolean isVertex(int row, int col){
 		//System.out.println(row + "," + col);
-		
+		//If it is a wall then obviously not a vertex
 		if(maze[row][col] == 1){
+			//System.out.println("Wall");
 			return false;
 		}
-		
+	
+		//The four adjacent nodes, formatted as [N, E, S, W]
 		int[] adjacencies = adjacencies(row, col);
 		
 		//Done for readability
