@@ -12,6 +12,7 @@ public class MatrixToGraph {
 	private int[][] maze;
 	//The size of our maze
 	private int rows, cols;
+	private Graph graph;
 	
 	public MatrixToGraph(int[][] maze){
 		this.maze = maze;
@@ -19,6 +20,25 @@ public class MatrixToGraph {
 		this.cols = maze[0].length;
 		//Testing
 		//System.out.println("COLS " + this.cols + " ROWS " + this.rows);
+		
+		HashSet<Vertex> verticies = getVertecies();
+		for(Vertex v : verticies){
+			HashSet<Edge> edges = getEdges(v.getPoint().getRow(), v.getPoint().getCol());
+			for(Edge e : edges){
+				v.addConnection(e);
+			}
+		}
+		
+		this.graph = new Graph(verticies);
+		/*
+		for(Edge e : edges){
+			System.out.println(e);
+		}
+		*/
+	}
+	
+	public Graph getGraph(){
+		return this.graph;
 	}
 	
 	/**
@@ -26,12 +46,12 @@ public class MatrixToGraph {
 	 * returns true, adds it to a HashSet
 	 * @return The HashSet of verticies
 	 */
-	public HashSet<Point> getAllVertecies(){
-		HashSet<Point> verticies = new HashSet<Point>();
+	public HashSet<Vertex> getVertecies(){
+		HashSet<Vertex> verticies = new HashSet<Vertex>();
 		for(int row = 0; row < rows; row++){
 			for(int col = 0; col < cols; col++){
 				if(isVertex(row, col)){
-					verticies.add(new Point(row, col));
+					verticies.add(new Vertex(new Point(row, col)));
 				}
 			}
 		}
@@ -50,9 +70,9 @@ public class MatrixToGraph {
 	 * @param row The row of our initial vertex
 	 * @param col The column of our initial vertex
 	 */
-	public HashSet<Edge> findEdges(int row, int col){
+	public HashSet<Edge> getEdges(int row, int col){
 		HashSet<Edge> edges = new HashSet<Edge>();
-		Point source = new Point(row, col);
+		Vertex source = new Vertex(new Point(row, col));
 		//Formatted [N, E, S, W]
 		int[] adjacencies = adjacencies(row, col);
 		
@@ -72,7 +92,7 @@ public class MatrixToGraph {
 			//We go until we hit another vertex
 			for(int i = row - 1; i >= 0; i--){
 				if(isVertex(i, col)){
-					Point dest = new Point(i, col);
+					Vertex dest = new Vertex(new Point(i, col));
 					edges.add(new Edge(source, dest, row - i));
 					break;
 				}
@@ -83,7 +103,7 @@ public class MatrixToGraph {
 			//We go until we hit another vertex
 			for(int i = col + 1; i < cols; i++){
 				if(isVertex(row, i)){
-					Point dest = new Point(row, i);
+					Vertex dest = new Vertex(new Point(row, i));
 					edges.add(new Edge(source, dest, i - col));
 					break;
 				}
@@ -94,7 +114,7 @@ public class MatrixToGraph {
 			//We go until we hit another vertex
 			for(int i = row + 1; i < rows; i++){
 				if(isVertex(i, col)){
-					Point dest = new Point(i, col);
+					Vertex dest = new Vertex(new Point(i, col));
 					edges.add(new Edge(source, dest, i - row));
 					break;
 				}
@@ -105,7 +125,7 @@ public class MatrixToGraph {
 			//We go until we hit another vertex
 			for(int i = col - 1; i >= 0; i--){
 				if(isVertex(row, i)){
-					Point dest = new Point(row, i);
+					Vertex dest = new Vertex(new Point(row, i));
 					edges.add(new Edge(source, dest, col - i));
 					break;
 				}
@@ -113,9 +133,11 @@ public class MatrixToGraph {
 		}
 		
 		//Testing
+		/*
 		for(Edge e : edges){
 			System.out.println(e);
 		}
+		*/
 		
 		return edges;
 	}

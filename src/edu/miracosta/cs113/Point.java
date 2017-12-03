@@ -27,4 +27,16 @@ public class Point {
 	public String toString(){
 		return "(" + row + "," + col + ")";
 	}
+	
+	public int hashCode(){
+		return Integer.valueOf(row).hashCode();
+	}
+	
+	public boolean equals(Object other){
+		if(other instanceof Point){
+			Point toCompare = (Point) other;
+			return this.row == toCompare.getRow() && this.col == toCompare.getCol();
+		}
+		return false;
+	}
 }
