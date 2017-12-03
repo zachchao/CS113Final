@@ -3,9 +3,16 @@ package edu.miracosta.cs113;
 import java.util.HashSet;
 
 /**
- * Assumes all rows are of same length
- * @author w7270821
- *
+ * MatrixToGraph.java
+ * 
+ * Class Invariant: Uses 1s and 0s only, assumes rows are all the same length
+ * 
+ * @author Zachary Chao <zach.chao@yahoo.com>
+ * @version 1.0
+ * 
+ * Algorithm - 
+ * 	Isolates vertecies by finding splits, deadends and corners
+ * 	Then from there constructs the edges and creates a graph
  */
 public class MatrixToGraph {
 	//0's are paths, 1's are boundaries
@@ -14,29 +21,31 @@ public class MatrixToGraph {
 	private int rows, cols;
 	private Graph graph;
 	
-	public MatrixToGraph(int[][] maze){
+	/**
+	 * Full argument constructor, constructs graph
+	 * @param maze The 2d matrix maze
+	 * @param testing Whether we are are testing and want test output or not
+	 */
+	public MatrixToGraph(int[][] maze, boolean testing){
 		this.maze = maze;
 		this.rows = maze.length;
 		this.cols = maze[0].length;
-		//Testing
-		//System.out.println("COLS " + this.cols + " ROWS " + this.rows);
 		
 		HashSet<Vertex> verticies = getVertecies();
 		for(Vertex v : verticies){
-			HashSet<Edge> edges = getEdges(v.getPoint().getRow(), v.getPoint().getCol());
+			HashSet<Edge> edges = getEdges(v.getPoint().getRow(), v.getPoint().getCol(), testing);
 			for(Edge e : edges){
 				v.addConnection(e);
 			}
 		}
-		
 		this.graph = new Graph(verticies);
-		/*
-		for(Edge e : edges){
-			System.out.println(e);
-		}
-		*/
 	}
 	
+	
+	/**
+	 * Getter for the graph
+	 * @return A graph representation of the 2d matrix
+	 */
 	public Graph getGraph(){
 		return this.graph;
 	}
@@ -70,19 +79,11 @@ public class MatrixToGraph {
 	 * @param row The row of our initial vertex
 	 * @param col The column of our initial vertex
 	 */
-	public HashSet<Edge> getEdges(int row, int col){
+	public HashSet<Edge> getEdges(int row, int col, boolean testing){
 		HashSet<Edge> edges = new HashSet<Edge>();
 		Vertex source = new Vertex(new Point(row, col));
 		//Formatted [N, E, S, W]
 		int[] adjacencies = adjacencies(row, col);
-		
-		//Testing
-		/*
-		for(int i : adjacencies){
-			System.out.print(i + " ");
-		}
-		System.out.println("");
-		*/
 		
 		//If an adjacencie is 0 then it is a path and there will 
 		//Be a corresponding vertex
@@ -132,13 +133,14 @@ public class MatrixToGraph {
 			}
 		}
 		
-		//Testing
-		/*
-		for(Edge e : edges){
+		//Test output
+		if(testing){
+			//Testing
+			System.out.println("Vert - " + source);
+			for(Edge e : edges){
 			System.out.println(e);
+			}
 		}
-		*/
-		
 		return edges;
 	}
 	
@@ -186,10 +188,8 @@ public class MatrixToGraph {
 	 * @return Whether or not it is a vertex
 	 */
 	public boolean isVertex(int row, int col){
-		//System.out.println(row + "," + col);
 		//If it is a wall then obviously not a vertex
 		if(maze[row][col] == 1){
-			//System.out.println("Wall");
 			return false;
 		}
 	
@@ -202,17 +202,6 @@ public class MatrixToGraph {
 		E = adjacencies[1];
 		S = adjacencies[2];
 		W = adjacencies[3];
-		
-		//Testing
-		/*
-		System.out.println("N: " + N + " E: " + E + " S: " + S + " W: " + W);
-		if(N != S || E != W){
-			System.out.println("Corner");
-		}
-		if(N + E + S + W != 2){
-			System.out.println("Split");
-		}
-		*/
 		
 		//Check if it is a vertex
 			//Corners				//Splits
