@@ -20,6 +20,7 @@ import java.util.Stack;
 public class Graph{
 	private HashSet<Vertex> verticies;
 	private HashSet<Edge> edges;
+	protected ArrayList<Vertex> path; 
 	
 	/**
 	 * Constructor takes HashSet of verticies
@@ -125,7 +126,7 @@ public class Graph{
 		}
 		
 		//Formatting the path to the end
-		ArrayList<Vertex> path = new ArrayList<Vertex>();
+		path = new ArrayList<Vertex>();
 		path.add(end);
 		int position = map.get(end);
 		while(position != 0){
